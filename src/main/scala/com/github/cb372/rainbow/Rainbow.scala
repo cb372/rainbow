@@ -22,6 +22,13 @@ trait Rainbow {
   def escape(colour: Colour) = s"\\e[${colour.code}m"
   val reset = "\\e[00m"
   
+  def rainbowify(chars: Seq[(Char, Colour)]): String = {
+    val (string, lastColour) = chars.foldLeft[(String, Option[Colour])](("", None)) { 
+      case ((acc, prevColour), (char, colour)) if prevColour == Some(colour) => (acc + char, prevColour) // keep the same colour
+      case ((acc, prevColour), (char, colour)) => (acc + escape(colour) + char, Some(colour)) // switch to new colour
+    }
+    return string + reset  
+  }
   def rainbowify(string: String, colour: Colour): String =
     s"${escape(colour)}${string}${reset}"
 
