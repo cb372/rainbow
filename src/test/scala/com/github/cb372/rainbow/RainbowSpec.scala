@@ -9,18 +9,29 @@ class RainbowSpec extends FlatSpec with ShouldMatchers {
 
   it should "insert correct escape and colour codes" in {
     val result = Rainbow.rainbowify("You've got red on you", Red)
-    result should equal("""\e[00;31mYou've got red on you\e[00m""")
+    result should equal("""\033[00;31mYou've got red on you\033[00m""")
   }
   
   it should "generate a sensibly coloured string given a list of chars and colours" in {
     val input = List(('a', Red), ('b', Blue), ('c', Blue), ('d', Green))
     val result = Rainbow.rainbowify(input)
-    result should equal("""\e[00;31ma\e[00;34mbc\e[00;32md\e[00m""")
+    result should equal("""\033[00;31ma\033[00;34mbc\033[00;32md\033[00m""")
   }
   
-  it should "generate correct echo command" in {
-    val result = Rainbow.toEchoCmd("You've got red on you", Red)
-    result should equal("""echo -e "\e[00;31mYou've got red on you\e[00m"""")
+  it should "generate a sensibly coloured string given a list of chars and RGB colours" in {
+    import Colour.fromRGB
+    val input = List(('a', (200, 0, 0)))
+    val result = Rainbow.rainbowify(input)
+    result should equal("""\033[00;31ma\033[00m""")
+  }
+  
+  behavior of "Colour"
+
+  it should "convert a reddish colour to Red" in {
+    Colour.fromRGB(200, 0, 0) should equal(Red)
   }
 
+  it should "convert java.awt Red to Red" in {
+    Colour.spellColourProperly(java.awt.Color.RED) should equal(Red)
+  }
 }
