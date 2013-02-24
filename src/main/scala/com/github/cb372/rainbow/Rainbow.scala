@@ -1,5 +1,7 @@
 package com.github.cb372.rainbow
 
+import scala.language.implicitConversions
+
 sealed trait Colour { 
   val code:String 
   val r: Int
