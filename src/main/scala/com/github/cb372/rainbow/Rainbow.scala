@@ -94,18 +94,27 @@ object Colour {
 }
 
 trait Rainbow {
-  def escape(colour: Colour) = s"\\033[${colour.code}m"
-  val reset = "\\033[00m"
+  def escapeCode(colour: Colour, escape: Boolean) = 
+    if (escape) 
+      s"\\033[${colour.code}m"
+    else
+      s"\033[${colour.code}m"
+  def resetCode(escape: Boolean) = 
+    if (escape)
+      "\\033[00m"
+    else
+      "\033[00m"
   
-  def rainbowify[C <% Colour](chars: Seq[(Char, C)]): String = {
+  def rainbowify[C <% Colour](chars: Seq[(Char, C)], escape: Boolean = true): String = {
     val (string, lastColour) = chars.foldLeft[(String, Option[Colour])](("", None)) { 
       case ((acc, prevColour), (char, colour)) if prevColour == Some(colour) => (acc + char, prevColour) // keep the same colour
-      case ((acc, prevColour), (char, colour)) => (acc + escape(colour) + char, Some(colour)) // switch to new colour
+      case ((acc, prevColour), (char, colour)) => (acc + escapeCode(colour, escape) + char, Some(colour)) // switch to new colour
     }
-    return string + reset  
+    return string + resetCode(escape)  
   }
-  def rainbowify(string: String, colour: Colour): String =
-    s"${escape(colour)}${string}${reset}"
+
+  def rainbowify(string: String, colour: Colour, escape: Boolean = true): String =
+    s"${escapeCode(colour, escape)}${string}${resetCode(escape)}"
 
 }
 

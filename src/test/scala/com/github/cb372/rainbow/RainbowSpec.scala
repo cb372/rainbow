@@ -9,7 +9,13 @@ class RainbowSpec extends FlatSpec with ShouldMatchers {
 
   it should "insert correct escape and colour codes" in {
     val result = Rainbow.rainbowify("You've got red on you", Red)
+    println(result)
     result should equal("""\033[00;31mYou've got red on you\033[00m""")
+  }
+
+  it should "not escape the ANSI codes if it is told not to" in {
+    val result = Rainbow.rainbowify("You've got red on you", Red, escape = false)
+    result should equal("\033[00;31mYou've got red on you\033[00m")
   }
   
   it should "generate a sensibly coloured string given a list of chars and colours" in {
